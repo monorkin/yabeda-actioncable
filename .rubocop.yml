@@ -1,0 +1,14 @@
+AllCops:
+  TargetRubyVersion: 3.1
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+Layout/IndentationConsistency:
+  EnforcedStyle: indented_internal_methods
+
+Layout/IndentationWidth:
+  Width: 2
