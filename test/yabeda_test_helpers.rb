@@ -38,6 +38,6 @@ module Yabeda::TestHelpers
 
     after = measurements[tags]
 
-    [before, after]
+    [ before, after ]
   end
 end

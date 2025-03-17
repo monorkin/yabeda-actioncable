@@ -5,8 +5,8 @@ require_relative "lib/yabeda/action_cable/version"
 Gem::Specification.new do |spec|
   spec.name = "yabeda-actioncable"
   spec.version = Yabeda::ActionCable::VERSION
-  spec.authors = ["Stanko K.R."]
-  spec.email = ["stanko@stanko.io"]
+  spec.authors = [ "Stanko K.R." ]
+  spec.email = [ "stanko@stanko.io" ]
 
   spec.summary = "Yabeda plugin for collecting ActionCable metrics"
   spec.description = <<~DESC
@@ -44,13 +44,10 @@ Gem::Specification.new do |spec|
 
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  spec.require_paths = [ "lib" ]
 
   spec.add_dependency "actioncable", ">= 7.2"
   spec.add_dependency "activesupport"
   spec.add_dependency "railties"
   spec.add_dependency "yabeda", "~> 0.8"
-
-  spec.add_development_dependency "redis"
-  spec.add_development_dependency "warning"
 end

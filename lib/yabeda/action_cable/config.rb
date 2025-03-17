@@ -5,7 +5,7 @@ require "active_support/core_ext/numeric/time"
 module Yabeda
   module ActionCable
     class Config
-      DEFAULT_BUCKETS = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10].freeze
+      DEFAULT_BUCKETS = [ 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10 ].freeze
       DEFAULT_STREAM_NAME = "yabeda.action_cable.metrics"
       DEFAULT_COLLECTION_PERIOD = 60.seconds.freeze
       DEFAULT_CHANNEL_CLASS_NAME = "ApplicationCable::Channel"
