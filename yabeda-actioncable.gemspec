@@ -51,5 +51,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "railties"
   spec.add_dependency "yabeda", "~> 0.8"
 
+  spec.add_development_dependency "redis"
   spec.add_development_dependency "warning"
 end
