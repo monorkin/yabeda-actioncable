@@ -8,6 +8,7 @@ module Yabeda
       DEFAULT_BUCKETS = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10].freeze
       DEFAULT_STREAM_NAME = "yabeda.action_cable.metrics"
       DEFAULT_COLLECTION_PERIOD = 60.seconds.freeze
+      DEFAULT_CHANNEL_CLASS_NAME = "ApplicationCable::Channel"
 
       attr_accessor :default_buckets,
                     :buckets,
@@ -17,12 +18,16 @@ module Yabeda
       attr_writer :collection_cooldown_period
 
       def initialize
+        reset!
+      end
+
+      def reset!
         @default_buckets = DEFAULT_BUCKETS.dup
         @buckets = {}
         @stream_name = DEFAULT_STREAM_NAME
         @collection_period = DEFAULT_COLLECTION_PERIOD.dup
         @collection_cooldown_period = nil
-        @channel_class_name = "ApplicationCable::Channel"
+        @channel_class_name = DEFAULT_CHANNEL_CLASS_NAME
       end
 
       def collection_cooldown_period

@@ -7,6 +7,10 @@ class Yabeda::ActionCable::ChannelConcernTest < ActionCable::Channel::TestCase
     include Yabeda::ActionCable::ChannelConcern
   end
 
+  def setup
+    Yabeda::ActionCable.config.reset!
+  end
+
   tests TestChannel
 
   def test_mixin_opens_stream_on_subscribe

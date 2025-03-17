@@ -14,17 +14,7 @@ module Yabeda
       end
 
       def measure
-        ::ActionCable.server.broadcast(stream_name, measurment_payload)
-      end
-
-      def stream_name
-        config.stream_name
-      end
-
-      def measurment_payload
-        {
-          sent_at: Time.now.to_f
-        }
+        ::ActionCable.server.broadcast(config.stream_name, measurment_payload)
       end
 
       def collect_measurment(payload)
@@ -33,21 +23,24 @@ module Yabeda
         run_unless_already_running do
           self.last_collected_at = Time.now
 
+          measure_connection_count
           measure_pubsub_latency(payload)
         end
-      end
-
-      def on_cooldown?
-        last_collected_at&.after?(cooldown_period.ago)
-      end
-
-      def cooldown_period
-        config.collection_cooldown_period
       end
 
       private
 
         attr_reader :mutex
+
+        def measurment_payload
+          {
+            sent_at: Time.now.to_f
+          }
+        end
+
+        def on_cooldown?
+          last_collected_at&.after?(config.collection_cooldown_period.ago)
+        end
 
         def run_unless_already_running
           lock_ackquired = mutex.try_lock
@@ -56,6 +49,10 @@ module Yabeda
           yield
         ensure
           mutex.unlock if lock_ackquired
+        end
+
+        def measure_connection_count
+          Yabeds.actioncable.connection_count.set({}, ActionCable.server.connections.length)
         end
 
         def measure_pubsub_latency(payload)

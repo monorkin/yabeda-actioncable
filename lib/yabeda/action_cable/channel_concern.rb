@@ -2,6 +2,7 @@
 
 module Yabeda
   module ActionCable
+    # :nodoc:
     module ChannelConcern
       extend ActiveSupport::Concern
 

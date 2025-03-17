@@ -16,3 +16,12 @@ Layout/IndentationConsistency:
 
 Layout/IndentationWidth:
   Width: 2
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
