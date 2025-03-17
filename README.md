@@ -1,28 +1,54 @@
-# Yabeda::Actioncable
+# Yabeda::ActionCable
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/yabeda/actioncable`. To experiment with that code, run `bin/console` for an interactive prompt.
+A [Yabeda](https://github.com/yabeda-rb/yabeda) plugin for collecting metrics from [ActionCable](https://guides.rubyonrails.org/action_cable_overview.html).
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
 
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
-```
-
-If bundler is not being used to manage dependencies, install the gem by executing:
+Add this gem to your application's Gemfile by executing:
 
 ```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+bundle add yabeda-actioncable
 ```
 
-## Usage
+## Metrics
 
-TODO: Write usage instructions here
+| Metric | Type | Tags | Experimental | Description |
+|-|-|-|-|-|
+| pubsub_latency | histogram | - | False | |
+| broadcast_duration | histogram | - | False | |
+| transmit_duration | histogram | - | False | |
+| action_execution_duration | histogram | - | False | |
+| confirmed_subscriptions | counter | - | False | |
+| rejected_subscription | counter | - | False | |
+| connection_count | gauge | - | False | |
+| action_allocations | gauge | - | True | |
+
+## Configuration
+
+```ruby
+Yabeda::ActionCable.configure do |config|
+  # The default buckets value for histograms
+  config.default_buckets = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
+
+  # The default buckets value can be overridden for each metric
+  config.buckets[:pubsub_latency] = [1, 2, 3]
+
+  # How often to collect metrics
+  config.collection_period = 60.seconds
+
+  # For how long to ignore incoming measurements after a measurement was collected
+  # This defaults to 0.5 * collection_period, but can be overridden
+  config.collection_cooldown_period = 30.seconds
+
+  # On which channel class to collect metrics
+  config.channel_class_name = "ApplicationCable::Channel"
+
+  # Name of the stream used to broadcast measurements to and collect them from
+  config.stream_name = "yabeda.action_cable.metrics"
+end
+```
+
 
 ## Development
 
@@ -32,7 +58,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/yabeda-actioncable.
+Bug reports and pull requests are welcome on GitHub at https://github.com/monorkin/yabeda-actioncable.
 
 ## License
 

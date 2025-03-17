@@ -85,10 +85,10 @@ module Yabeda
                 buckets Yabeda::ActionCable.config.buckets_for(:action_execution_duration)
               end
 
-              counter :confirmed_subscription_count,
+              counter :confirmed_subscriptions,
                       comment: "Number of confirmed ActionCable subscriptions"
 
-              counter :rejected_subscription_count,
+              counter :rejected_subscriptions,
                       comment: "Number of confirmed ActionCable subscriptions"
 
               gauge :connection_count,
@@ -126,7 +126,7 @@ module Yabeda
 
           subscribers.push(
             ActiveSupport::Notifications.monotonic_subscribe("transmit_subscription_confirmation.action_cable") do |event|
-              Yabeda.actioncable.confirmed_subscription_count.increment(
+              Yabeda.actioncable.confirmed_subscriptions.increment(
                 {
                   channel: event.payload[:channel_class].name
                 },
@@ -137,7 +137,7 @@ module Yabeda
 
           subscribers.push(
             ActiveSupport::Notifications.monotonic_subscribe("transmit_subscription_rejection.action_cable") do |event|
-              Yabeda.actioncable.rejected_subscription_count.increment(
+              Yabeda.actioncable.rejected_subscriptions.increment(
                 {
                   channel: event.payload[:channel_class].name
                 },
