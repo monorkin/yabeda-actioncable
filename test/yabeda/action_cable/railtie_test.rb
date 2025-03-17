@@ -8,12 +8,7 @@ class Yabeda::ActionCable::RailtieTest < Minitest::Test
 
   def setup
     super
-    Yabeda::ActionCable.config.reset!
-  end
-
-  def teardown
-    ActiveSupport::Notifications.notifier = ActiveSupport::Notifications::Fanout.new
-    super
+    Yabeda::ActionCable.reset!
   end
 
   def test_that_the_railtie_installs_yabeda_actioncable

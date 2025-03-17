@@ -8,7 +8,7 @@ class Yabeda::ActionCable::ChannelConcernTest < ActionCable::Channel::TestCase
   end
 
   def setup
-    Yabeda::ActionCable.config.reset!
+    Yabeda::ActionCable.reset!
   end
 
   tests TestChannel

@@ -19,90 +19,9 @@ module Yabeda
       MUTEX = Mutex.new
 
       def install!
-        Yabeda.configure do
-          group :actioncable do
-            histogram :pubsub_latency do
-              comment "The time it takes for a message to go through the " \
-                      "PubSub backend (e.g. Redis, SolidQueue, Postgres)"
-              unit :seconds
-              buckets config.buckets_for(:pubsub_latency)
-            end
-
-            histogram :broadcast_duration do
-              comment "The time it takes to broadcast a message"
-              unit :seconds
-              buckets config.buckets_for(:broadcast_duration)
-            end
-
-            histogram :transmission_duration do
-              comment "The time it takes to write a message to a WebSocket"
-              unit :seconds
-              buckets config.buckets_for(:transmission_duration)
-            end
-
-            histogram :action_execution_duration do
-              comment "The time it takes to perform an invoked action"
-              unit :seconds
-              buckets config.buckets_for(:action_execution_duration)
-            end
-
-            counter :confirmed_subscription_count,
-                    comment: "Number of confirmed ActionCable subscriptions"
-
-            counter :rejected_subscription_count,
-                    comment: "Number of confirmed ActionCable subscriptions"
-
-            gauge :connection_count,
-                  comment: "Number of open WebSocket connections",
-                  aggregation: :sum
-          end
-        end
-
-        ActiveSupport::Notifications.subscribe "perform_action.action_cable" do |event|
-          Yabeda.actioncable.action_execution_duration.measure(
-            {
-              channel: event.payload[:channel_class].name,
-              action: event.payload[:action]
-            },
-            event.duration / 1000.0
-          )
-        end
-
-        ActiveSupport::Notifications.subscribe "transmit.action_cable" do |event|
-          Yabeda.actioncable.transmission_duration.measure(
-            {
-              channel: event.payload[:channel_class].name
-            },
-            event.duration / 1000.0
-          )
-        end
-
-        ActiveSupport::Notifications.subscribe "transmit_subscription_confirmation.action_cable" do |event|
-          Yabeda.actioncable.confirmed_subscription_count.increment(
-            {
-              channel: event.payload[:channel_class].name
-            },
-            by: 1
-          )
-        end
-
-        ActiveSupport::Notifications.subscribe "transmit_subscription_rejection.action_cable" do |event|
-          Yabeda.actioncable.rejected_subscription_count.increment(
-            {
-              channel: event.payload[:channel_class].name
-            },
-            by: 1
-          )
-        end
-
-        ActiveSupport::Notifications.subscribe "broadcast.action_cable" do |event|
-          Yabeda.actioncable.broadcast_duration.measure(
-            {},
-            event.duration / 1000.0
-          )
-        end
-
-        config.channel_class_name.constantize.include(ChannelConcern)
+        configure_yabeda!
+        subscribe!
+        include_channel_concern!
       end
 
       def measure
@@ -129,7 +48,123 @@ module Yabeda
         end
       end
 
+      def reset!
+        unsubscribe!
+        config.reset!
+      end
+
       private
+
+        attr_accessor :subscribers
+
+        def configure_yabeda!
+          Yabeda.configure do
+            group :actioncable do
+              histogram :pubsub_latency do
+                comment "The time it takes for a message to go through the " \
+                        "PubSub backend (e.g. Redis, SolidQueue, Postgres)"
+                unit :seconds
+                buckets Yabeda::ActionCable.config.buckets_for(:pubsub_latency)
+              end
+
+              histogram :broadcast_duration do
+                comment "The time it takes to broadcast a message"
+                unit :seconds
+                buckets Yabeda::ActionCable.config.buckets_for(:broadcast_duration)
+              end
+
+              histogram :transmission_duration do
+                comment "The time it takes to write a message to a WebSocket"
+                unit :seconds
+                buckets Yabeda::ActionCable.config.buckets_for(:transmission_duration)
+              end
+
+              histogram :action_execution_duration do
+                comment "The time it takes to perform an invoked action"
+                unit :seconds
+                buckets Yabeda::ActionCable.config.buckets_for(:action_execution_duration)
+              end
+
+              counter :confirmed_subscription_count,
+                      comment: "Number of confirmed ActionCable subscriptions"
+
+              counter :rejected_subscription_count,
+                      comment: "Number of confirmed ActionCable subscriptions"
+
+              gauge :connection_count,
+                    comment: "Number of open WebSocket connections",
+                    aggregation: :sum
+            end
+          end
+        end
+
+        def subscribe!
+          unsubscribe!
+
+          subscribers.push(
+            ActiveSupport::Notifications.monotonic_subscribe("perform_action.action_cable") do |event|
+              Yabeda.actioncable.action_execution_duration.measure(
+                {
+                  channel: event.payload[:channel_class].name,
+                  action: event.payload[:action]
+                },
+                event.duration / 1000.0
+              )
+            end
+          )
+
+          subscribers.push(
+            ActiveSupport::Notifications.monotonic_subscribe("transmit.action_cable") do |event|
+              Yabeda.actioncable.transmission_duration.measure(
+                {
+                  channel: event.payload[:channel_class].name
+                },
+                event.duration / 1000.0
+              )
+            end
+          )
+
+          subscribers.push(
+            ActiveSupport::Notifications.monotonic_subscribe("transmit_subscription_confirmation.action_cable") do |event|
+              Yabeda.actioncable.confirmed_subscription_count.increment(
+                {
+                  channel: event.payload[:channel_class].name
+                },
+                by: 1
+              )
+            end
+          )
+
+          subscribers.push(
+            ActiveSupport::Notifications.monotonic_subscribe("transmit_subscription_rejection.action_cable") do |event|
+              Yabeda.actioncable.rejected_subscription_count.increment(
+                {
+                  channel: event.payload[:channel_class].name
+                },
+                by: 1
+              )
+            end
+          )
+
+          subscribers.push(
+            ActiveSupport::Notifications.monotonic_subscribe("broadcast.action_cable") do |event|
+              Yabeda.actioncable.broadcast_duration.measure(
+                {},
+                event.duration / 1000.0
+              )
+            end
+          )
+        end
+
+        def unsubscribe!
+          subscribers&.each { |subscriber| ActiveSupport::Notifications.unsubscribe(subscriber) }
+          self.subscribers = []
+        end
+
+
+        def include_channel_concern!
+          config.channel_class_name.constantize.include(ChannelConcern)
+        end
 
         def measurment_collector
           return @measurment_collector if defined?(@measurment_collector)

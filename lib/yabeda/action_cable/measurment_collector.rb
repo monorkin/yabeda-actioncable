@@ -52,7 +52,7 @@ module Yabeda
         end
 
         def measure_connection_count
-          Yabeds.actioncable.connection_count.set({}, ActionCable.server.connections.length)
+          Yabeda.actioncable.connection_count.set({}, ::ActionCable.server.connections.length)
         end
 
         def measure_pubsub_latency(payload)

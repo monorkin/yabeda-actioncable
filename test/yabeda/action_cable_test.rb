@@ -3,6 +3,8 @@
 require "test_helper"
 
 class Yabeda::ActionCableTest < Minitest::Test
+  include Yabeda::TestHelpers
+
   def test_that_it_has_a_version_number
     refute_nil ::Yabeda::ActionCable::VERSION
   end
