@@ -8,6 +8,7 @@ require "active_support/notifications"
 
 require "yabeda/action_cable/config"
 require "yabeda/action_cable/measurment_collector"
+require "yabeda/action_cable/channel_concern"
 require "yabeda/action_cable/railtie"
 
 module Yabeda
