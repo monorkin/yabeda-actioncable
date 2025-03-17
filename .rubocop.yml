@@ -7,6 +7,10 @@ Style/StringLiterals:
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
 
+Style/ClassAndModuleChildren:
+  Exclude:
+    - 'test/**/*'
+
 Layout/IndentationConsistency:
   EnforcedStyle: indented_internal_methods
 

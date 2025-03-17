@@ -4,6 +4,7 @@ require_relative "action_cable/version"
 
 require "yabeda"
 require "action_cable"
+require "active_support/notifications"
 
 require "yabeda/action_cable/config"
 require "yabeda/action_cable/measurment_collector"
