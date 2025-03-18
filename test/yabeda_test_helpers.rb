@@ -22,9 +22,9 @@ module Yabeda::TestHelpers
     if options[:delta]
       assert_in_delta value, after, options[:delta],
                       "Expected histogram #{name} to measure #{value.inspect} with a delta " \
-                      "of #{options[:delta]}, but it was #{after.inspect}"
+                      "of #{options[:delta]}, but it measured #{after.inspect}"
     else
-      assert_equal value, after, "Expected histogram #{name} to measure #{value.inspect}, but measured #{after.inspect}"
+      assert_equal value, after, "Expected histogram #{name} to measure #{value.inspect}, but it measured #{after.inspect}"
     end
   end
 

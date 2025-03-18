@@ -30,6 +30,24 @@ class Yabeda::ActionCable::ConfigTest < Minitest::Test
     )
   end
 
+  def test_that_tags_for_metric_returns_default_tags_if_no_custom_tags_defined
+    config = Yabeda::ActionCable::Config.new
+
+    config.default_tags = { some: "tag" }
+
+    assert_equal(
+      config.default_tags,
+      config.tags_for(:some_metric)
+    )
+
+    config.tags[:some_metric] = { another: "tag" }
+
+    assert_equal(
+      config.tags[:some_metric],
+      config.tags_for(:some_metric)
+    )
+  end
+
   def test_that_reset_resets_all_values_to_their_defaults
     config = Yabeda::ActionCable::Config.new
 

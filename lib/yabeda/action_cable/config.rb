@@ -12,6 +12,8 @@ module Yabeda
 
       attr_accessor :default_buckets,
                     :buckets,
+                    :default_tags,
+                    :tags,
                     :stream_name,
                     :collection_period,
                     :channel_class_name
@@ -24,6 +26,8 @@ module Yabeda
       def reset!
         @default_buckets = DEFAULT_BUCKETS.dup
         @buckets = {}
+        @default_tags = {}
+        @tags = {}
         @stream_name = DEFAULT_STREAM_NAME
         @collection_period = DEFAULT_COLLECTION_PERIOD.dup
         @collection_cooldown_period = nil
@@ -40,6 +44,10 @@ module Yabeda
 
       def buckets_for(metric)
         buckets[metric] || default_buckets
+      end
+
+      def tags_for(metric)
+        tags[metric] || default_tags
       end
     end
   end
