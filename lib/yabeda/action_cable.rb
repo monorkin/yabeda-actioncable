@@ -24,6 +24,10 @@ module Yabeda
         include_channel_concern!
       end
 
+      def stream_name
+        config.stream_name
+      end
+
       def measure
         measurment_collector.measure
       end
