@@ -81,6 +81,12 @@ Yabeda::ActionCable.configure do |config|
 
   # Name of the stream used to broadcast measurements to and collect them from
   config.stream_name = "yabeda.action_cable.metrics"
+
+  # Enable an experimental metric
+  config.enable_experimental_metric(:allocations_during_action)
+
+  # Disable an experimental metric
+  config.disable_experimental_metric(:allocations_during_action)
 end
 ```
 
