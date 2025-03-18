@@ -185,7 +185,15 @@ module Yabeda
         end
 
         def include_channel_concern!
-          config.channel_class_name.constantize.include(ChannelConcern)
+          klass = config.channel_class_name.safe_constantize
+
+          if klass
+            klass.include(ChannelConcern)
+          elsif defined?(Rails)
+            Rails.application.config.after_initialize do
+              config.channel_class_name.constantize.include(ChannelConcern)
+            end
+          end
         end
 
         def channel_concern_included?

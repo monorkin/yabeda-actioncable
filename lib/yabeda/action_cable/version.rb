@@ -4,7 +4,7 @@ module Yabeda
   module ActionCable
     MAJOR_VERSION = 0
     MINOR_VERSION = 2
-    PATCH_VERSION = 0
+    PATCH_VERSION = 1
     PRERELEASE_VERSION = nil
 
     VERSION = [
