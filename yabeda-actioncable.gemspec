@@ -46,8 +46,9 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = [ "lib" ]
 
-  spec.add_dependency "actioncable", ">= 7.2"
-  spec.add_dependency "activesupport"
-  spec.add_dependency "railties"
+  min_rails_version = "7.2"
+  spec.add_dependency "actioncable", ">= #{min_rails_version}"
+  spec.add_dependency "activesupport", ">= #{min_rails_version}"
+  spec.add_dependency "railties", ">= #{min_rails_version}"
   spec.add_dependency "yabeda", "~> 0.8"
 end

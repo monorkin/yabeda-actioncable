@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    yabeda-actioncable (0.1.0)
+    yabeda-actioncable (0.2.0)
       actioncable (>= 7.2)
-      activesupport
-      railties
+      activesupport (>= 7.2)
+      railties (>= 7.2)
       yabeda (~> 0.8)
 
 GEM
