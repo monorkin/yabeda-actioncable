@@ -18,6 +18,10 @@ module Yabeda
     class << self
       MUTEX = Mutex.new
 
+      def installed?
+        yabeda_configured? && subscirbed? && channel_concern_included?
+      end
+
       def install!
         configure_yabeda!
         subscribe!
@@ -62,8 +66,8 @@ module Yabeda
         attr_accessor :subscribers
 
         def configure_yabeda!
-          Yabeda.configure do
-            group :actioncable do
+          Yabeda.group :actioncable do
+            Yabeda.configure do
               histogram :pubsub_latency do
                 comment "The time it takes for a message to go through the " \
                         "PubSub backend (e.g. Redis, SolidQueue, Postgres)"
@@ -99,12 +103,14 @@ module Yabeda
                     comment: "Number of open WebSocket connections",
                     aggregation: :sum
 
-              if Yabeda::ActionCable.config.experimental_metric_enabled?(:allocations_during_action)
-                counter :allocations_during_action,
-                        comment: "Number of allocated objects during the invoication of an action"
-              end
+              counter :allocations_during_action,
+                      comment: "Number of allocated objects during the invoication of an action"
             end
           end
+        end
+
+        def yabeda_configured?
+          Yabeda.groups.include?(:actioncable)
         end
 
         def subscribe!
@@ -120,15 +126,13 @@ module Yabeda
                 event.duration / 1000.0
               )
 
-              if config.experimental_metric_enabled?(:allocations_during_action)
-                Yabeda.actioncable.allocations_during_action.increment(
-                  config.tags_for(:allocations_during_action).merge(
-                    channel: event.payload[:channel_class].name,
-                    action: event.payload[:action]
-                  ),
-                  by: event.allocations
-                )
-              end
+              Yabeda.actioncable.allocations_during_action.increment(
+                config.tags_for(:allocations_during_action).merge(
+                  channel: event.payload[:channel_class].name,
+                  action: event.payload[:action]
+                ),
+                by: event.allocations
+              )
             end
           )
 
@@ -180,9 +184,16 @@ module Yabeda
           self.subscribers = []
         end
 
+        def subscirbed?
+          subscribers.present?
+        end
 
         def include_channel_concern!
           config.channel_class_name.constantize.include(ChannelConcern)
+        end
+
+        def channel_concern_included?
+          config.channel_class_name.constantize.include?(ChannelConcern)
         end
 
         def measurment_collector

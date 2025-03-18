@@ -16,10 +16,10 @@ class Yabeda::ActionCable::RailtieTest < Minitest::Test
       config.channel_class_name = TestChannel.name
     end
 
-    refute TestChannel.include?(Yabeda::ActionCable::ChannelConcern)
+    refute Yabeda::ActionCable.installed?
 
     Yabeda::ActionCable::Railtie.instance.run_initializers
 
-    assert TestChannel.include?(Yabeda::ActionCable::ChannelConcern)
+    assert Yabeda::ActionCable.installed?
   end
 end
