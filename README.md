@@ -57,7 +57,7 @@ bundle add yabeda-actioncable
   This happens because the short-running actions measure the number of allocations before and 
   after they execute and report the difference. If another action is allocating a lot of 
   objects at the same time then the measurement of the short-running action will include those 
-  objects in its measurement which artificially inflates the number of allocations it reports.
+  objects which artificially inflates the number of allocations it reports.
  
 </details>
 
