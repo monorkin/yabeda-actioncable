@@ -30,32 +30,31 @@ bundle add yabeda-actioncable
 
   | | |
   |-|-|
-  | Metric | counter |
+  | Metric | allocations_during_action |
   | Type | counter |
   | Description | Shows which actions allocate the most objects while they execute |
 
   This can be helpful while investigating memory related problems, but the metric is imprecise
-  and requires some deduction to be usefult.
+  and requires some deduction to be useful.
 
-  The data can be displayes as a heatmap that plots actions vs time vs number of allocations.
+  The data can be displayers as a heat map that plots actions vs time vs number of allocations.
   In other words, deep red segments represent when an action allocated a lot of objects.
   ![image](https://github.com/user-attachments/assets/845d12e2-1452-4e3e-9d6a-cf967fe8a647)
 
-  Due to how ActiveSupport::Notification::Events capture the number of allocations you may 
-  experiance some "radiated heat" in your heatmap.
+  Due to how [ActiveSupport::Notification::Event](https://api.rubyonrails.org/classes/ActiveSupport/Notifications/Event.html#method-i-allocations) captures the number of allocations you may experience some "radiated heat" in your heat map.
 
-  If you have a short-running action that doesn't allocate a lot of object, and a long-runng
+  If you have a short-running action that doesn't allocate a lot of object, and a long-running
   one that does running at the same time in the same process you'll see that the short-running 
-  one also become "hot" in the heatmap.
+  one also become "hot" in the heat map.
 
   ![image](https://github.com/user-attachments/assets/3e8f4d85-2559-4f6a-ab0a-b0ffe895d7e9)
 
 
   This happens because the short-running actions measure the number of allocations before and 
   after they execute. If another action is allocating a lot of objects at the same time then
-  the measurment of the short-running action will include those objects in its measurment when
+  the measurement of the short-running action will include those objects in its measurement when
   it finishes which artificially inflates the number of allocations it reports.
-  
+ 
 </details>
 
 ## Configuration
