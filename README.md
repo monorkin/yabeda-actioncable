@@ -11,6 +11,52 @@ Add this gem to your application's Gemfile by executing:
 bundle add yabeda-actioncable
 ```
 
+Periodically run `Yabeda::ActionCable.measure`
+
+Via Cron:
+
+```crontab
+# The maximum resolution you can achive with cron is 1 minute
+* * * * * bin/rails runner "Yabeda::ActionCable.measure"
+```
+
+Via SolidQueu:
+
+```yaml
+yabeda_actioncable:
+  command: "Yabeda::ActionCable.measure"
+  schedule: every 30 seconds
+```
+
+## Configuration
+
+```ruby
+Yabeda::ActionCable.configure do |config|
+  # The default buckets value for histograms
+  config.default_buckets = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
+
+  # The default buckets value can be overridden for each metric
+  config.buckets[:pubsub_latency] = [1, 2, 3]
+
+  # How often to collect metrics
+  # Set this to whatever you configured in Cron or SolidQueue
+  config.collection_period = 60.seconds
+
+  # For how long to ignore incoming measurements after a measurement was collected
+  # This defaults to 0.5 * collection_period, but can be overridden
+  config.collection_cooldown_period = 30.seconds
+
+  # On which channel class to collect metrics
+  config.channel_class_name = "ApplicationCable::Channel"
+
+  # Name of the stream used to broadcast measurements to and collect them from
+  config.stream_name = "yabeda.action_cable.metrics"
+end
+```
+
+
+
+
 ## Metrics
 
 #### pubsub_latency
@@ -100,32 +146,6 @@ bundle add yabeda-actioncable
   after they execute and report the difference. If another action is allocating a lot of 
   objects at the same time then the measurement of the short-running action will include those 
   objects which artificially inflates the number of allocations it reports.
-
-## Configuration
-
-```ruby
-Yabeda::ActionCable.configure do |config|
-  # The default buckets value for histograms
-  config.default_buckets = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
-
-  # The default buckets value can be overridden for each metric
-  config.buckets[:pubsub_latency] = [1, 2, 3]
-
-  # How often to collect metrics
-  config.collection_period = 60.seconds
-
-  # For how long to ignore incoming measurements after a measurement was collected
-  # This defaults to 0.5 * collection_period, but can be overridden
-  config.collection_cooldown_period = 30.seconds
-
-  # On which channel class to collect metrics
-  config.channel_class_name = "ApplicationCable::Channel"
-
-  # Name of the stream used to broadcast measurements to and collect them from
-  config.stream_name = "yabeda.action_cable.metrics"
-end
-```
-
 
 ## Development
 
