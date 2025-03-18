@@ -118,7 +118,7 @@ module Yabeda
 
           subscribers.push(
             ActiveSupport::Notifications.monotonic_subscribe("perform_action.action_cable") do |event|
-              tags = { channel: event.payload[:channel_class].name, action: event.payload[:action] }
+              tags = { channel: event.payload[:channel_class], action: event.payload[:action] }
 
               Yabeda.actioncable.action_execution_duration.measure(
                 config.tags_for(:action_execution_duration).merge(tags),
@@ -136,7 +136,7 @@ module Yabeda
             ActiveSupport::Notifications.monotonic_subscribe("transmit.action_cable") do |event|
               Yabeda.actioncable.transmission_duration.measure(
                 config.tags_for(:transmission_duration).merge(
-                  channel: event.payload[:channel_class].name
+                  channel: event.payload[:channel_class]
                 ),
                 event.duration / 1000.0
               )
@@ -147,7 +147,7 @@ module Yabeda
             ActiveSupport::Notifications.monotonic_subscribe("transmit_subscription_confirmation.action_cable") do |event|
               Yabeda.actioncable.confirmed_subscriptions.increment(
                 config.tags_for(:confirmed_subscriptions).merge(
-                  channel: event.payload[:channel_class].name
+                  channel: event.payload[:channel_class]
                 ),
                 by: 1
               )
@@ -158,7 +158,7 @@ module Yabeda
             ActiveSupport::Notifications.monotonic_subscribe("transmit_subscription_rejection.action_cable") do |event|
               Yabeda.actioncable.rejected_subscriptions.increment(
                 config.tags_for(:rejected_subscriptions).merge(
-                  channel: event.payload[:channel_class].name
+                  channel: event.payload[:channel_class]
                 ),
                 by: 1
               )

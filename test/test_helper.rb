@@ -20,4 +20,5 @@ Yabeda.register_adapter(:test, Yabeda::TestAdapter.instance)
 
 Warning.ignore(/method redefined/)
 
+require "minitest/focus"
 require "minitest/autorun"
