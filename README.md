@@ -13,24 +13,69 @@ bundle add yabeda-actioncable
 
 ## Metrics
 
-| Metric | Type | Tags | Description |
-|-|-|-|-|
-| pubsub_latency | histogram | - | |
-| broadcast_duration | histogram | - | |
-| transmit_duration | histogram | - | |
-| action_execution_duration | histogram | - | |
-| confirmed_subscriptions | counter | - | |
-| rejected_subscription | counter | - | |
-| connection_count | gauge | - | |
-
-### Experimental metrics
+#### pubsub_latency
 
   | | |
   |-|-|
-  | Metric | allocations_during_action |
-  | Type | counter |
+  | Type | histogram |
   | Tags | - |
-  | Description | Shows which actions allocate the most objects while they execute |
+  | Description | The time it takes for a message to go through the PubSub backend (e.g. Redis, SolidQueue, Postgres) |
+
+#### broadcast_duration
+
+  | | |
+  |-|-|
+  | Type | histogram |
+  | Tags | - |
+  | Description | The time it takes to broadcast a message to the PubSub backend |
+
+#### transmit_duration
+
+  | | |
+  |-|-|
+  | Type | histogram |
+  | Tags | channel |
+  | Description | The time it takes to write a message to a WebSocket |
+
+#### action_execution_duration
+
+  | | |
+  |-|-|
+  | Type | histogram |
+  | Tags | channel, action |
+  | Description | The time it takes to perform an invoked action |
+
+#### confirmed_subscriptions
+
+  | | |
+  |-|-|
+  | Type | counter |
+  | Tags | channel |
+  | Description | Total number of confirmed subscriptions |
+
+#### rejected_subscriptions
+
+  | | |
+  |-|-|
+  | Type | counter |
+  | Tags | channel |
+  | Description | Total number of rejected subscriptions |
+
+#### connection_count
+
+  | | |
+  |-|-|
+  | Type | gauge |
+  | Tags | - |
+  | Description | Number of open WebSocket connections |
+
+#### allocations_during_action
+
+  | | |
+  |-|-|
+  | Type | counter |
+  | Tags | channel, action |
+  | Description | Number of allocated objects during the invoication of an action |
 
   This can be helpful while investigating memory related problems, but the metric is imprecise
   and requires some deduction to be useful.

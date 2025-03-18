@@ -52,7 +52,10 @@ module Yabeda
         end
 
         def measure_connection_count
-          Yabeda.actioncable.connection_count.set({}, ::ActionCable.server.connections.length)
+          Yabeda.actioncable.connection_count.set(
+            Yabeda::ActionCable.config.tags_for(:connection_count),
+            ::ActionCable.server.connections.length
+          )
         end
 
         def measure_pubsub_latency(payload)
@@ -60,7 +63,10 @@ module Yabeda
           pubsub_latency = Time.now.to_f - sent_at
           return unless pubsub_latency.positive? || pubsub_latency.zero?
 
-          Yabeda.actioncable.pubsub_latency.measure({}, pubsub_latency)
+          Yabeda.actioncable.pubsub_latency.measure(
+            Yabeda::ActionCable.config.tags_for(:pubsub_latency),
+            pubsub_latency
+          )
         end
     end
   end

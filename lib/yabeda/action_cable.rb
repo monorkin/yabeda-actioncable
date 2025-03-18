@@ -76,7 +76,7 @@ module Yabeda
               end
 
               histogram :broadcast_duration do
-                comment "The time it takes to broadcast a message"
+                comment "The time it takes to broadcast a message to the PubSub backend"
                 unit :seconds
                 buckets Yabeda::ActionCable.config.buckets_for(:broadcast_duration)
               end
@@ -94,10 +94,10 @@ module Yabeda
               end
 
               counter :confirmed_subscriptions,
-                      comment: "Number of confirmed ActionCable subscriptions"
+                      comment: "Total number of confirmed subscriptions"
 
               counter :rejected_subscriptions,
-                      comment: "Number of confirmed ActionCable subscriptions"
+                      comment: "Total number of rejected subscriptions"
 
               gauge :connection_count,
                     comment: "Number of open WebSocket connections",
@@ -118,19 +118,15 @@ module Yabeda
 
           subscribers.push(
             ActiveSupport::Notifications.monotonic_subscribe("perform_action.action_cable") do |event|
+              tags = { channel: event.payload[:channel_class].name, action: event.payload[:action] }
+
               Yabeda.actioncable.action_execution_duration.measure(
-                config.tags_for(:action_execution_duration).merge(
-                  channel: event.payload[:channel_class].name,
-                  action: event.payload[:action]
-                ),
+                config.tags_for(:action_execution_duration).merge(tags),
                 event.duration / 1000.0
               )
 
               Yabeda.actioncable.allocations_during_action.increment(
-                config.tags_for(:allocations_during_action).merge(
-                  channel: event.payload[:channel_class].name,
-                  action: event.payload[:action]
-                ),
+                config.tags_for(:allocations_during_action).merge(tags),
                 by: event.allocations
               )
             end
