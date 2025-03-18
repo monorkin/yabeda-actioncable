@@ -48,20 +48,6 @@ class Yabeda::ActionCable::ConfigTest < Minitest::Test
     )
   end
 
-  def test_enable_experimental_metrics_utilities
-    config = Yabeda::ActionCable::Config.new
-
-    refute config.experimental_metric_enabled?(:some_metric)
-
-    config.enable_experimental_metric(:some_metric)
-
-    assert config.experimental_metric_enabled?(:some_metric)
-
-    config.disable_experimental_metric(:some_metric)
-
-    refute config.experimental_metric_enabled?(:some_metric)
-  end
-
   def test_that_reset_resets_all_values_to_their_defaults
     config = Yabeda::ActionCable::Config.new
 
@@ -73,7 +59,6 @@ class Yabeda::ActionCable::ConfigTest < Minitest::Test
     config.collection_period = 100.seconds
     config.collection_cooldown_period = 80.seconds
     config.channel_class_name = "SomeChannel"
-    config.enabled_experimental_metrics << :some_metric
 
     assert_equal([ 1, 2, 3 ], config.default_buckets)
     assert_equal([ 4, 5, 6 ], config.buckets[:some_metric])
@@ -83,7 +68,6 @@ class Yabeda::ActionCable::ConfigTest < Minitest::Test
     assert_equal(100.seconds, config.collection_period)
     assert_equal(80.seconds, config.collection_cooldown_period)
     assert_equal("SomeChannel", config.channel_class_name)
-    assert_equal(Set[:some_metric], config.enabled_experimental_metrics)
 
     config.reset!
 
@@ -95,6 +79,5 @@ class Yabeda::ActionCable::ConfigTest < Minitest::Test
     assert_equal(Yabeda::ActionCable::Config::DEFAULT_COLLECTION_PERIOD, config.collection_period)
     assert_equal(Yabeda::ActionCable::Config::DEFAULT_COLLECTION_PERIOD / 2, config.collection_cooldown_period)
     assert_equal(Yabeda::ActionCable::Config::DEFAULT_CHANNEL_CLASS_NAME, config.channel_class_name)
-    assert_equal(Set.new, config.enabled_experimental_metrics)
   end
 end

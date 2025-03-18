@@ -25,9 +25,6 @@ bundle add yabeda-actioncable
 
 ### Experimental metrics
 
-<details>
-  <summary>allocations_during_action</summary>
-
   | | |
   |-|-|
   | Metric | allocations_during_action |
@@ -41,7 +38,7 @@ bundle add yabeda-actioncable
   The data can be displayed as a heat map that plots actions vs time vs number of allocations.
   In other words, deep red segments represent when an action allocated a lot of objects.
 
-  ![image](https://github.com/user-attachments/assets/845d12e2-1452-4e3e-9d6a-cf967fe8a647)
+  ![heat_map_of_object_allocations](https://github.com/user-attachments/assets/845d12e2-1452-4e3e-9d6a-cf967fe8a647)
 
   Due to how [ActiveSupport::Notification::Event](https://api.rubyonrails.org/classes/ActiveSupport/Notifications/Event.html#method-i-allocations) captures the number of allocations you may experience some "radiated heat" in your heat map.
 
@@ -49,7 +46,7 @@ bundle add yabeda-actioncable
   one that does, both running at the same time in the same process, you'll see that the short-running 
   action also become "hot" in the heat map.
 
-  ![image](https://github.com/user-attachments/assets/3e8f4d85-2559-4f6a-ab0a-b0ffe895d7e9)
+  ![heat_map_of_object_allocations_with_radiated_heat_highlighted](https://github.com/user-attachments/assets/3e8f4d85-2559-4f6a-ab0a-b0ffe895d7e9)
 
   In the example above only one action allocated a lot of objects, but most actions running at the
   same time also appear "hot" in the graph.
@@ -58,8 +55,6 @@ bundle add yabeda-actioncable
   after they execute and report the difference. If another action is allocating a lot of 
   objects at the same time then the measurement of the short-running action will include those 
   objects which artificially inflates the number of allocations it reports.
- 
-</details>
 
 ## Configuration
 
@@ -83,12 +78,6 @@ Yabeda::ActionCable.configure do |config|
 
   # Name of the stream used to broadcast measurements to and collect them from
   config.stream_name = "yabeda.action_cable.metrics"
-
-  # Enable an experimental metric
-  config.enable_experimental_metric(:allocations_during_action)
-
-  # Disable an experimental metric
-  config.disable_experimental_metric(:allocations_during_action)
 end
 ```
 

@@ -17,8 +17,7 @@ module Yabeda
                     :tags,
                     :stream_name,
                     :collection_period,
-                    :channel_class_name,
-                    :enabled_experimental_metrics
+                    :channel_class_name
       attr_writer :collection_cooldown_period
 
       def initialize
@@ -34,7 +33,6 @@ module Yabeda
         @collection_period = DEFAULT_COLLECTION_PERIOD.dup
         @collection_cooldown_period = nil
         @channel_class_name = DEFAULT_CHANNEL_CLASS_NAME
-        @enabled_experimental_metrics = Set.new
       end
 
       def collection_cooldown_period
@@ -51,18 +49,6 @@ module Yabeda
 
       def tags_for(metric)
         tags[metric] || default_tags
-      end
-
-      def enable_experimental_metric(metric)
-        enabled_experimental_metrics << metric
-      end
-
-      def disable_experimental_metric(metric)
-        enabled_experimental_metrics.delete(metric)
-      end
-
-      def experimental_metric_enabled?(metric)
-        enabled_experimental_metrics.include?(metric)
       end
     end
   end
