@@ -51,6 +51,8 @@ bundle add yabeda-actioncable
 
   ![image](https://github.com/user-attachments/assets/3e8f4d85-2559-4f6a-ab0a-b0ffe895d7e9)
 
+  In the example above only one action allocated a lot of objects, but most actions running at the
+  same time also appear "hot" in the graph.
 
   This happens because the short-running actions measure the number of allocations before and 
   after they execute and report the difference. If another action is allocating a lot of 
