@@ -13,16 +13,23 @@ bundle add yabeda-actioncable
 
 ## Metrics
 
-| Metric | Type | Tags | Experimental | Description |
-|-|-|-|-|-|
-| pubsub_latency | histogram | - | False | |
-| broadcast_duration | histogram | - | False | |
-| transmit_duration | histogram | - | False | |
-| action_execution_duration | histogram | - | False | |
-| confirmed_subscriptions | counter | - | False | |
-| rejected_subscription | counter | - | False | |
-| connection_count | gauge | - | False | |
-| action_allocations | gauge | - | True | |
+| Metric | Type | Tags | Description |
+|-|-|-|-|
+| pubsub_latency | histogram | - | |
+| broadcast_duration | histogram | - | |
+| transmit_duration | histogram | - | |
+| action_execution_duration | histogram | - | |
+| confirmed_subscriptions | counter | - | |
+| rejected_subscription | counter | - | |
+| connection_count | gauge | - | |
+
+### Experimental metrics
+
+<details>
+  <summary>allocations_during_action</summary>
+
+  This metric is experimental because...
+</details>
 
 ## Configuration
 

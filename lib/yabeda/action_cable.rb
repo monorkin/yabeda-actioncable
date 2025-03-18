@@ -98,6 +98,11 @@ module Yabeda
               gauge :connection_count,
                     comment: "Number of open WebSocket connections",
                     aggregation: :sum
+
+              if Yabeda::ActionCable.config.experimental_metric_enabled?(:allocations_during_action)
+                counter :allocations_during_action,
+                        comment: "Number of allocated objects during the invoication of an action"
+              end
             end
           end
         end
@@ -114,6 +119,16 @@ module Yabeda
                 ),
                 event.duration / 1000.0
               )
+
+              if config.experimental_metric_enabled?(:allocations_during_action)
+                Yabeda.actioncable.allocations_during_action.increment(
+                  config.tags_for(:allocations_during_action).merge(
+                    channel: event.payload[:channel_class].name,
+                    action: event.payload[:action]
+                  ),
+                  by: event.allocations
+                )
+              end
             end
           )
 
