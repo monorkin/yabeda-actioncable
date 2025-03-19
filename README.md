@@ -71,12 +71,9 @@ Yabeda::ActionCable.configure do |config|
 end
 ```
 
-
-
-
 ## Metrics
 
-#### pubsub_latency
+### pubsub_latency
 
 | | |
 |-|-|
@@ -84,7 +81,14 @@ end
 | Tags | - |
 | Description | The time it takes for a message to go through the PubSub backend (e.g. Redis, SolidQueue, Postgres) |
 
-#### broadcast_duration
+*This is a very good health indicator for your PubSub backend (e.g. Redis, SolidQueue, Postgres)*
+
+The larger the latency the longer it takes the backend to deliver messages to ActionCable.
+A sudden spike may indicate resource contention of some kind (CPU, Memory, Network, ...).
+
+![plot_of_the_pubsub_latency](https://github.com/user-attachments/assets/d7c0a3b7-ce98-424d-8954-7f645d60f0e9)
+
+### broadcast_duration
 
 | | |
 |-|-|
@@ -92,7 +96,11 @@ end
 | Tags | - |
 | Description | The time it takes to broadcast a message to the PubSub backend |
 
-#### transmit_duration
+![plot_of_the_broadcast_duration](https://github.com/user-attachments/assets/0fdd9f3c-0704-4d63-a269-c48ea1d63b1a)
+
+![plot_of_the_number_of_broadcasts](https://github.com/user-attachments/assets/6792a457-c133-4cbc-a4ac-1ecc3250a7dc)
+
+### transmit_duration
 
 | | |
 |-|-|
@@ -100,7 +108,11 @@ end
 | Tags | channel |
 | Description | The time it takes to write a message to a WebSocket |
 
-#### action_execution_duration
+![plot_of_the_transmit_duration](https://github.com/user-attachments/assets/9eba9326-a74f-4e58-b422-fb943a15e0e9)
+
+![plot_of_the_number_of_transmissions](https://github.com/user-attachments/assets/1b04da8a-9b9b-4e62-a89c-ed301f9cb606)
+
+### action_execution_duration
 
 | | |
 |-|-|
@@ -108,7 +120,22 @@ end
 | Tags | channel, action |
 | Description | The time it takes to perform an invoked action |
 
-#### confirmed_subscriptions
+This metric directly detirmines your throughput and how much you'll have to scale to accomodate traffic.
+The longer the duration the fewer messages your app can process before they start queueing up.
+
+![different_plots_of_the_action_execution_duration](https://github.com/user-attachments/assets/7376fadf-e48e-4dec-900c-424528239760)
+
+The overall average duration is the most important metric for scaling. 
+You can use it in [Little's law](https://en.wikipedia.org/wiki/Little%27s_law) 
+to figure out how many instances you need to handle the current amount of traffic without messages queuing up.
+
+The number of actions executed can also be used for scaling - depending on your infrastructure and code 
+you may know approximately how many instances you need to perform a given number of actions.
+
+The duration can also be broken down by channel and action which can help you pinpoint problems
+in the application logic of certain actions.
+
+### confirmed_subscriptions
 
 | | |
 |-|-|
@@ -116,7 +143,7 @@ end
 | Tags | channel |
 | Description | Total number of confirmed subscriptions |
 
-#### rejected_subscriptions
+### rejected_subscriptions
 
 | | |
 |-|-|
@@ -124,7 +151,7 @@ end
 | Tags | channel |
 | Description | Total number of rejected subscriptions |
 
-#### connection_count
+### connection_count
 
 | | |
 |-|-|
@@ -132,7 +159,20 @@ end
 | Tags | - |
 | Description | Number of open WebSocket connections |
 
-#### allocations_during_action
+*This is as a very good service health indicator*
+
+Large sudden drops may indicate a problem that directly impacts users.
+While large sudden spikes coupled with performance problems may help you pinpoint the Connection object as the source of the problem.
+
+It can also be used for preemptive scaling - depending on your infrastructure and code you may know approximately how many instances
+you need to serve a given amount of users.
+
+![different_plots_of_the_number_of_connections](https://github.com/user-attachments/assets/87804bcb-42dc-4adc-be66-adbaacb1d3c4)
+
+In addition to plotting just the count you can also plot the number of connections per instance which is useful if you are experiancing 
+problems just on one instance.
+
+### allocations_during_action
 
 | | |
 |-|-|
