@@ -189,8 +189,8 @@ module Yabeda
 
           if klass
             klass.include(ChannelConcern)
-          elsif defined?(Rails)
-            Rails.application.config.after_initialize do
+          elsif defined?(::Rails)
+            ::Rails.application.config.after_initialize do
               config.channel_class_name.constantize.include(ChannelConcern)
             end
           end
