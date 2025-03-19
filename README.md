@@ -123,17 +123,21 @@ A sudden spike may indicate resource contention of some kind (CPU, Memory, Netwo
 This metric directly detirmines your throughput and how much you'll have to scale to accomodate traffic.
 The longer the duration the fewer messages your app can process before they start queueing up.
 
-![different_plots_of_the_action_execution_duration](https://github.com/user-attachments/assets/7376fadf-e48e-4dec-900c-424528239760)
-
 The overall average duration is the most important metric for scaling. 
 You can use it in [Little's law](https://en.wikipedia.org/wiki/Little%27s_law) 
 to figure out how many instances you need to handle the current amount of traffic without messages queuing up.
 
+![plot_of_the_overall_action_execution_duration_metrics](https://github.com/user-attachments/assets/d42d022f-6957-4b80-8045-78452451fb00)
+
 The number of actions executed can also be used for scaling - depending on your infrastructure and code 
 you may know approximately how many instances you need to perform a given number of actions.
 
+![plot_of_the_number_of_invoked_actions](https://github.com/user-attachments/assets/18384f1d-364b-47e0-8100-b26fea433ade)
+
 The duration can also be broken down by channel and action which can help you pinpoint problems
 in the application logic of certain actions.
+
+![plot_of_the_action_execution_duration_broken_down_by_channel_action](https://github.com/user-attachments/assets/623752f4-b1f3-4ca9-8de9-0ad454b90ef5)
 
 ### confirmed_subscriptions
 
